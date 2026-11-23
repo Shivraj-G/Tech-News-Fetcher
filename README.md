@@ -105,10 +105,5 @@ Run it on a schedule instead of manually. Options:
 ## Known limitations
 
 - **Feeds are fetched on every run** with no caching or deduplication, so running it twice in one day repeats the same articles.
-- **No HTTP error handling**: `requests.post()` is not checked for failures, and a failing feed prints an error but does not abort the run.
 - **Hard-coded config**: sources and limits live in the script rather than in the `.env` file.
 - **Some entries may lack `entry.published`** (e.g. Atom feeds), which raises an error caught per-source by the `try/except`.
-
-## License
-
-No license file is included; add one if you plan to share the project.
