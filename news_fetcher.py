@@ -2,10 +2,15 @@ import feedparser
 import requests
 import os
 from dotenv import load_dotenv
-load_dotenv()
-webhook_url = os.getenv("WEBHOOK")
 
-sourse_url = {
+load_dotenv()
+
+
+def get_webhook_url():
+    return os.getenv("WEBHOOK")
+
+
+source_urls = {
     "TechCrunch AI": "https://techcrunch.com/category/artificial-intelligence/feed/",
     "VentureBeat AI": "https://venturebeat.com/category/ai/feed/",
     "MIT Technology Review AI": "https://www.technologyreview.com/topic/artificial-intelligence/feed/",
@@ -18,28 +23,26 @@ sourse_url = {
     "Google Research": "https://research.google/blog/rss/",
     "Microsoft Research": "https://www.microsoft.com/en-us/research/feed/",
     "NVIDIA Developer Blog": "https://developer.nvidia.com/blog/feed/",
-} 
-
+}
 
 limit = 5
 
-def get_latest_news(sourse_url,limit):
 
+def get_latest_news(sourse_url, limit):
     all_news = {}
-    for sourse,url in sourse_url.items():
-        news =  feedparser.parse(url)
+    for sourse, url in sourse_url.items():
+        news = feedparser.parse(url)
 
-        #print("+"*30)
-        #print(sourse)
-        #print("+"*30)
-        #print(news)
         try:
             if sourse not in all_news:
-                    all_news[sourse]=[]
+                all_news[sourse] = []
             for entry in news.entries[:limit]:
-                #print("="*50)
-                #print("\n",entry.published,"\n",entry.title,"\n",entry.summary,"\n",entry.link)
-                all_news[sourse].append({"Title":entry.title,"Published at":entry.published,"Summery":entry.summary,"Link":entry.link})
+                all_news[sourse].append({
+                    "Title": entry.title,
+                    "Published at": entry.published,
+                    "Summery": entry.summary,
+                    "Link": entry.link,
+                })
         except Exception as e:
             print(f"An error occured while fetching {sourse} : {e}")
     return all_news
@@ -55,9 +58,10 @@ def build_embeds(news):
                 "url": article["Link"],
                 "color": 3447003,
                 "author": {"name": source},
-                "footer": {"text": article["Published at"]}
+                "footer": {"text": article["Published at"]},
             })
     return embeds
+
 
 def send_to_discord(webhook_url, news_dict):
     embeds = build_embeds(news_dict)
@@ -67,5 +71,11 @@ def send_to_discord(webhook_url, news_dict):
         response = requests.post(webhook_url, json={"embeds": batch})
         print(response.status_code, response.text)
 
-news = get_latest_news(sourse_url,limit)
-send_to_discord(webhook_url,news)
+
+def main():
+    news = get_latest_news(source_urls, limit)
+    send_to_discord(get_webhook_url(), news)
+
+
+if __name__ == "__main__":
+    main()

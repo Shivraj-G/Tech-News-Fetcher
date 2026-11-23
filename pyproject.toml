@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tech-news-fetcher"
+version = "0.1.0"
+description = "Fetch the latest AI/tech headlines from RSS feeds and post them to a Discord webhook."
+readme = "README.md"
+requires-python = ">=3.8"
+license = { text = "MIT" }
+keywords = ["rss", "feedparser", "discord", "webhook", "news", "ai"]
+classifiers = [
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Topic :: Internet :: WWW/HTTP :: Indexing/Search",
+]
+dependencies = [
+    "feedparser>=6.0.0",
+    "requests>=2.31.0",
+    "python-dotenv>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0.0",
+]
+
+[project.scripts]
+tech-news-fetcher = "news_fetcher:main"
+
+[tool.setuptools]
+py-modules = ["news_fetcher"]
